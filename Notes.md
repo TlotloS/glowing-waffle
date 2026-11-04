@@ -28,9 +28,9 @@ You need the .NET 10 SDK and Docker Desktop.
    dotnet run --project src/OT.Assessment.Consumer
    ```
 
-   The API listens on http://localhost:5084.
+   The API listens on http://localhost:5000.
 
-4. Run the tester. `test/OT.Assessment.Tester/appsettings.json` already points at `http://localhost:5084/api/player/casinowager`.
+4. Run the tester. `test/OT.Assessment.Tester/appsettings.json` already points at `http://localhost:5000/api/player/casinowager`.
 
    ```
    dotnet run --project test/OT.Assessment.Tester
