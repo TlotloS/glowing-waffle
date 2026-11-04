@@ -2,7 +2,12 @@
 
 ## How to run it
 
-You need Docker Desktop, and the .NET 10 SDK to run the tester.
+You need Git, Docker Desktop, and the .NET 10 SDK to run the tester. Run every command from the root of the repository:
+
+```
+git clone https://github.com/TlotloS/glowing-waffle.git
+cd glowing-waffle
+```
 
 1. Start everything:
    ```

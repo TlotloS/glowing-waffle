@@ -10,7 +10,16 @@ An API, a background consumer and a SQL Server database that capture casino wage
 
 ## Quick start
 
-You need Docker Desktop, and the .NET 10 SDK to run the load tester.
+You need Git, Docker Desktop, and the .NET 10 SDK to run the load tester.
+
+Clone the repository and move into it. Run every command below from this folder:
+
+```
+git clone https://github.com/TlotloS/glowing-waffle.git
+cd glowing-waffle
+```
+
+Start everything:
 
 ```
 docker compose up -d --build
@@ -21,6 +30,8 @@ Then open Swagger UI at http://localhost:5000/swagger. To run the load test:
 ```
 dotnet run --project test/OT.Assessment.Tester
 ```
+
+Stop everything with `docker compose down`.
 
 ## More detail
 
