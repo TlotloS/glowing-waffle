@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OT.Assessment.App/OT.Assessment.App.csproj" />
+    <Project Path="src/OT.Assessment.Consumer/OT.Assessment.Consumer.csproj" />
+    <Project Path="src/OT.Assessment.Core/OT.Assessment.Core.csproj" />
+    <Project Path="src/OT.Assessment.Infrastructure/OT.Assessment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/OT.Assessment.Tester/OT.Assessment.Tester.csproj" />
+    <Project Path="test/OT.Assessment.UnitTests/OT.Assessment.UnitTests.csproj" />
+  </Folder>
+</Solution>
