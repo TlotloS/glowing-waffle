@@ -1,8 +1,8 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using OT.Assessment.Consumer.Batching;
-using OT.Assessment.Core.Interfaces;
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Interfaces;
+using OT.Assessment.Domain.Models;
 using OT.Assessment.Infrastructure.Messaging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

@@ -1,4 +1,4 @@
-namespace OT.Assessment.Core.Models;
+namespace OT.Assessment.Domain.Models;
 
 public class TopSpender
 {

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using OT.Assessment.Core.Interfaces;
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Interfaces;
+using OT.Assessment.Domain.Models;
 using RabbitMQ.Client;
 
 namespace OT.Assessment.Infrastructure.Messaging;
@@ -64,7 +64,7 @@ public sealed class RabbitMqCasinoWagerPublisher : ICasinoWagerPublisher, IAsync
         bool connectionIsOpen = _connection != null && _connection.IsOpen;
         if (!connectionIsOpen)
         {
-            _connection = await RabbitMqConnectionFactory.CreateConnectionAsync(_options, "OT.Assessment.App", cancellationToken);
+            _connection = await RabbitMqConnectionFactory.CreateConnectionAsync(_options, "OT.Assessment.Api", cancellationToken);
         }
 
         var channelOptions = new CreateChannelOptions(

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OT.Assessment.Core.Interfaces;
+using OT.Assessment.Domain.Interfaces;
 using OT.Assessment.Infrastructure.Messaging;
 using OT.Assessment.Infrastructure.Persistence;
 

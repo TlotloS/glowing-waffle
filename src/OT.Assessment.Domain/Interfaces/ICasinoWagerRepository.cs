@@ -1,6 +1,6 @@
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Models;
 
-namespace OT.Assessment.Core.Interfaces;
+namespace OT.Assessment.Domain.Interfaces;
 
 public interface ICasinoWagerRepository
 {

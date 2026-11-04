@@ -24,7 +24,7 @@ You need the .NET 10 SDK and Docker Desktop.
 3. Start the API and the consumer in two terminals:
 
    ```
-   dotnet run --project src/OT.Assessment.App --launch-profile http
+   dotnet run --project src/OT.Assessment.Api --launch-profile http
    dotnet run --project src/OT.Assessment.Consumer
    ```
 
@@ -50,13 +50,15 @@ Server=localhost;Database=OT_Assessment_DB;Integrated Security=SSPI;TrustServerC
 
 | Project | Purpose |
 |---|---|
-| `OT.Assessment.App` | The API. Validates wagers and publishes them to RabbitMQ, and serves the two GET endpoints. |
+| `OT.Assessment.Api` | The API. Validates wagers and publishes them to RabbitMQ, and serves the two GET endpoints. |
 | `OT.Assessment.Consumer` | A worker service that reads wagers from the queue and saves them in batches. |
-| `OT.Assessment.Core` | Models and interfaces. It has no dependencies. |
-| `OT.Assessment.Infrastructure` | RabbitMQ and SQL Server code that implements the Core interfaces. |
+| `OT.Assessment.Domain` | Models and interfaces. It has no dependencies. |
+| `OT.Assessment.Infrastructure` | RabbitMQ and SQL Server code that implements the Domain interfaces. |
 | `OT.Assessment.UnitTests` | Tests for paging and the consumer's batch buffer. |
 
-The App and Consumer depend on the interfaces in Core and only touch Infrastructure to register services. I kept the dependency rule from Clean Architecture but skipped the extra layers (MediatR, use case handlers, domain entities) because the problem is a pipeline with two reads and has almost no business logic for them to hold.
+The brief calls the API project `OT.Assessment.App`. I renamed it `OT.Assessment.Api` to follow the usual Api / Domain / Infrastructure naming, which the FAQ allows.
+
+The Api and Consumer depend on the interfaces in Domain and only touch Infrastructure to register services. I kept the dependency rule from Clean Architecture but left out a separate Application layer and MediatR. The problem is a pipeline with two reads and has almost no business logic, so those layers would mostly pass data through.
 
 ### Flow
 

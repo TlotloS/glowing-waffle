@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/OT.Assessment.App/OT.Assessment.App.csproj" />
+    <Project Path="src/OT.Assessment.Api/OT.Assessment.Api.csproj" />
     <Project Path="src/OT.Assessment.Consumer/OT.Assessment.Consumer.csproj" />
-    <Project Path="src/OT.Assessment.Core/OT.Assessment.Core.csproj" />
+    <Project Path="src/OT.Assessment.Domain/OT.Assessment.Domain.csproj" />
     <Project Path="src/OT.Assessment.Infrastructure/OT.Assessment.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/test/">

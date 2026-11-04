@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace OT.Assessment.Core.Models;
+namespace OT.Assessment.Domain.Models;
 
 // The wager event posted to the API and published to the queue.
 // The payload has more fields than this, but these are the only ones we store.

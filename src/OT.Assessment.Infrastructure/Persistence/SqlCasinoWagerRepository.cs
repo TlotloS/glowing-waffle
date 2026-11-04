@@ -1,8 +1,8 @@
 using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
-using OT.Assessment.Core.Interfaces;
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Interfaces;
+using OT.Assessment.Domain.Models;
 
 namespace OT.Assessment.Infrastructure.Persistence;
 

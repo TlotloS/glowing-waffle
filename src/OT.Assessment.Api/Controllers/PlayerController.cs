@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using OT.Assessment.Core.Interfaces;
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Interfaces;
+using OT.Assessment.Domain.Models;
 
-namespace OT.Assessment.App.Controllers;
+namespace OT.Assessment.Api.Controllers;
 
 [ApiController]
 [Route("api/player")]

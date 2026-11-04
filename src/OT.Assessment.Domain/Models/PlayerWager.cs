@@ -1,4 +1,4 @@
-namespace OT.Assessment.Core.Models;
+namespace OT.Assessment.Domain.Models;
 
 // One row in a player's list of wagers.
 public class PlayerWager

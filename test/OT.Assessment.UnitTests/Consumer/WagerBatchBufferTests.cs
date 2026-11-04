@@ -1,5 +1,5 @@
 using OT.Assessment.Consumer.Batching;
-using OT.Assessment.Core.Models;
+using OT.Assessment.Domain.Models;
 
 namespace OT.Assessment.UnitTests.Consumer;
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\OT.Assessment.Core\OT.Assessment.Core.csproj" />
+    <ProjectReference Include="..\OT.Assessment.Domain\OT.Assessment.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
