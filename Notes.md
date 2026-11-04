@@ -80,23 +80,39 @@ I used Dapper with stored procedures. The brief asks for stored procedures, and 
 
 ## Load test results
 
-Run on 2026-11-04 on a Windows 11 laptop, with SQL Server and RabbitMQ in Docker Desktop.
+Two runs on 2026-11-04 on a Windows 11 laptop, with SQL Server and RabbitMQ in Docker Desktop. The database was recreated before each run.
+
+| Measure | Run 1 | Run 2 |
+|---|---|---|
+| Requests sent by the tester | 7000 | 7000 |
+| Successful (`202 Accepted`) | 7000 | 7000 |
+| Failed requests | 0 | 0 |
+| Tester duration | 28 s at 250 requests/s | 28 s at 250 requests/s |
+| API latency p50 / p95 / p99 | 7.5 / 618 / 1010 ms | 6.2 / 61 / 155 ms |
+| API latency max | 7571 ms | 222 ms |
+| Wagers stored | 7000 (all distinct) | 7000 (all distinct) |
+| Time from first to last insert | 29.7 s | 26.2 s |
+| Consumer batches | 517, none failed | 382, none failed |
+| Messages left in the main queue | 0 | 0 |
+| Messages in the dead letter queue | 0 | 0 |
+| Players whose total doesn't match their wagers | 0 | 0 |
+
+Every submitted wager was stored in both runs and nothing was lost. The consumer kept pace with the tester, saving the last wager within about 2 seconds of the tester finishing.
+
+Run 1 was the first time the API had handled load since starting, so its latency includes warm-up (JIT compilation, the first RabbitMQ connection, the SQL connection pool filling). Run 2 is the steadier number.
+
+### GET endpoints during the load
+
+During run 2 a script called both GET endpoints about once a second for the whole test: `topSpenders?count=10`, then the first page of wagers for the current top spender.
 
 | Measure | Result |
 |---|---|
-| Requests sent by the tester | 7000 |
-| Successful (`202 Accepted`) | 7000 |
-| Failed requests | 0 |
-| Tester duration | 28 s at 250 requests/s |
-| API latency | p50 7.5 ms, p95 618 ms, p99 1010 ms, max 7571 ms |
-| Wagers stored | 7000 (7000 distinct `WagerId`s) |
-| Time from first to last insert | 29.7 s |
-| Consumer batches | 517, no failed batches |
-| Messages left in the main queue | 0 |
-| Messages in the dead letter queue | 0 |
-| Players whose total doesn't match their wagers | 0 |
+| Polls | 45 |
+| Non-200 responses | 0 on either endpoint |
+| Slowest `topSpenders` response | 11 ms |
+| Slowest player page response | 26 ms |
 
-Every submitted wager was stored and nothing was lost. The consumer kept pace with the tester: the last wager was saved within about 2 seconds of the tester finishing.
+Both endpoints returned data that grew as wagers were saved, and correct results once the queue was empty.
 
 The reconciliation query I used:
 
@@ -114,7 +130,7 @@ WHERE p.TotalAmountSpend <> (SELECT SUM(Amount) FROM dbo.CasinoWager w WHERE w.A
 
 - The SQL Server container's health check kept timing out. `sqlcmd` inside the container couldn't resolve `localhost`, and connecting to `127.0.0.1` fixed it.
 - Another project's SQL Server container was already using port 1433, so I stopped it for this work.
-- The API publishes through one RabbitMQ channel guarded by a semaphore, because channels aren't safe to publish on from several threads. Each publish waits for its confirm, so publishes queue up behind each other. That's where the p95 and max latency come from.
+- The API publishes through one RabbitMQ channel guarded by a semaphore, because channels aren't safe to publish on from several threads. Each publish waits for its confirm, so publishes queue up behind each other. Combined with warm-up, that's where run 1's p95 and max latency come from.
 
 ## Improvements for production
 
