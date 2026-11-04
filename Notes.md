@@ -2,7 +2,7 @@
 
 ## How to run it
 
-You need Git, Docker Desktop, and the .NET 10 SDK to run the tester. Run every command from the root of the repository:
+You need Git and Docker Desktop. Run every command from the root of the repository:
 
 ```
 git clone https://github.com/TlotloS/glowing-waffle.git
@@ -15,10 +15,13 @@ cd glowing-waffle
    ```
    This starts SQL Server, RabbitMQ, the API and the consumer. On the first run it also creates the database from `DatabaseGenerate.sql`. Later runs keep the existing data.
 2. Open Swagger UI at http://localhost:5000/swagger to try the endpoints.
-3. Run the tester. It already points at `http://localhost:5000/api/player/casinowager`.
+3. Run the tester:
    ```
-   dotnet run --project test/OT.Assessment.Tester
+   docker compose run --rm tester
    ```
+   It runs in its own container and sends wagers to the `api` container, using the settings in `docker/tester-appsettings.json`. The container is removed when the test finishes.
+
+   With the .NET 10 SDK installed, `dotnet run --project test/OT.Assessment.Tester` runs the same test from your machine. That version already points at `http://localhost:5000/api/player/casinowager`.
 
 | Service | Address | Login |
 |---|---|---|

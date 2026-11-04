@@ -1,6 +1,7 @@
 # Runs the whole system: SQL Server, RabbitMQ, the API and the consumer.
 #   docker compose up -d --build
 # Swagger UI: http://localhost:5000/swagger
+# Load test:  docker compose run --rm tester
 # To run only SQL Server and RabbitMQ (and the apps from your IDE):
 #   docker compose up -d sqlserver rabbitmq
 # The passwords below are for local development only.
@@ -92,6 +93,21 @@ services:
       rabbitmq:
         condition: service_healthy
     restart: unless-stopped
+
+  # The supplied load tester. It only runs when asked for:
+  #   docker compose run --rm tester
+  tester:
+    build:
+      context: .
+      dockerfile: test/OT.Assessment.Tester/Dockerfile
+    container_name: ot-tester
+    profiles: ["tester"]
+    volumes:
+      # Points the tester at the api container instead of localhost.
+      - ./docker/tester-appsettings.json:/app/appsettings.json:ro
+    depends_on:
+      api:
+        condition: service_started
 
 volumes:
   sqlserver-data:

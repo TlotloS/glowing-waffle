@@ -1,0 +1,5 @@
+{
+  "Api": {
+    "EndpointUri": "http://api:8080/api/player/casinowager"
+  }
+}

@@ -10,7 +10,7 @@ An API, a background consumer and a SQL Server database that capture casino wage
 
 ## Quick start
 
-You need Git, Docker Desktop, and the .NET 10 SDK to run the load tester.
+You need Git and Docker Desktop.
 
 Clone the repository and move into it. Run every command below from this folder:
 
@@ -28,8 +28,10 @@ docker compose up -d --build
 Then open Swagger UI at http://localhost:5000/swagger. To run the load test:
 
 ```
-dotnet run --project test/OT.Assessment.Tester
+docker compose run --rm tester
 ```
+
+If you have the .NET 10 SDK, `dotnet run --project test/OT.Assessment.Tester` runs the same test from your machine.
 
 Stop everything with `docker compose down`.
 
