@@ -2,23 +2,28 @@
 
 ## How to run it
 
-You need the .NET 10 SDK and Docker Desktop.
+You need Docker Desktop, and the .NET 10 SDK to run the tester.
 
-1. Start SQL Server and RabbitMQ with `docker compose up -d`.
-   - SQL Server: `localhost,1433`, user `sa`, password `OtAssessment_Dev1`
-   - RabbitMQ: `localhost:5672`, user `guest`, password `guest`. The management UI is at http://localhost:15672.
-2. Run `DatabaseGenerate.sql` against the server (SSMS or Azure Data Studio works). It drops and recreates `OT_Assessment_DB`.
-3. Start the API and the consumer in two terminals:
+1. Start everything:
    ```
-   dotnet run --project src/OT.Assessment.Api --launch-profile http
-   dotnet run --project src/OT.Assessment.Consumer
+   docker compose up -d --build
    ```
-4. Run the tester. It already points at `http://localhost:5000/api/player/casinowager`.
+   This starts SQL Server, RabbitMQ, the API and the consumer. On the first run it also creates the database from `DatabaseGenerate.sql`. Later runs keep the existing data.
+2. Open Swagger UI at http://localhost:5000/swagger to try the endpoints.
+3. Run the tester. It already points at `http://localhost:5000/api/player/casinowager`.
    ```
    dotnet run --project test/OT.Assessment.Tester
    ```
 
-Windows authentication doesn't work with SQL Server in a Linux container, so both `appsettings.json` files use the `sa` login. For a local SQL Server, change `ConnectionStrings:OT_Assessment_DB` to `Server=localhost;Database=OT_Assessment_DB;Integrated Security=SSPI;TrustServerCertificate=True;`.
+| Service | Address | Login |
+|---|---|---|
+| API and Swagger UI | http://localhost:5000/swagger | |
+| RabbitMQ management UI | http://localhost:15672 | `guest` / `guest` |
+| SQL Server | `localhost,1433` | `sa` / `OtAssessment_Dev1` |
+
+To run the API and consumer from an IDE instead, start only the infrastructure with `docker compose up -d sqlserver rabbitmq db-init`, then run both projects. The API listens on port 5000 either way, so stop the `api` container first if it's running.
+
+Windows authentication doesn't work with SQL Server in a Linux container, so the apps use the `sa` login. For a local SQL Server, change `ConnectionStrings:OT_Assessment_DB` in both `appsettings.json` files to `Server=localhost;Database=OT_Assessment_DB;Integrated Security=SSPI;TrustServerCertificate=True;`.
 
 ## Design
 

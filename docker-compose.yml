@@ -1,5 +1,8 @@
-# Local infrastructure for the assessment: SQL Server and RabbitMQ.
-# Start with:  docker compose up -d
+# Runs the whole system: SQL Server, RabbitMQ, the API and the consumer.
+#   docker compose up -d --build
+# Swagger UI: http://localhost:5000/swagger
+# To run only SQL Server and RabbitMQ (and the apps from your IDE):
+#   docker compose up -d sqlserver rabbitmq
 # The passwords below are for local development only.
 
 name: ot-assessment
@@ -23,6 +26,21 @@ services:
       retries: 10
       start_period: 20s
 
+  # Runs once: creates the database from DatabaseGenerate.sql if it doesn't exist yet, then exits.
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ot-db-init
+    environment:
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-OtAssessment_Dev1}"
+    volumes:
+      - ./DatabaseGenerate.sql:/scripts/DatabaseGenerate.sql:ro
+      - ./docker/db-init.sh:/scripts/db-init.sh:ro
+    entrypoint: ["/bin/bash", "/scripts/db-init.sh"]
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: "no"
+
   rabbitmq:
     image: rabbitmq:4.1-management
     container_name: ot-rabbitmq
@@ -40,6 +58,40 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: src/OT.Assessment.Api/Dockerfile
+    container_name: ot-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__OT_Assessment_DB: "Server=sqlserver,1433;Database=OT_Assessment_DB;User Id=sa;Password=${MSSQL_SA_PASSWORD:-OtAssessment_Dev1};TrustServerCertificate=True;"
+      RabbitMq__HostName: "rabbitmq"
+    ports:
+      - "5000:8080"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  consumer:
+    build:
+      context: .
+      dockerfile: src/OT.Assessment.Consumer/Dockerfile
+    container_name: ot-consumer
+    environment:
+      DOTNET_ENVIRONMENT: "Development"
+      ConnectionStrings__OT_Assessment_DB: "Server=sqlserver,1433;Database=OT_Assessment_DB;User Id=sa;Password=${MSSQL_SA_PASSWORD:-OtAssessment_Dev1};TrustServerCertificate=True;"
+      RabbitMq__HostName: "rabbitmq"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   sqlserver-data:

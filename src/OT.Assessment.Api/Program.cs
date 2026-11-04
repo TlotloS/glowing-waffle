@@ -18,6 +18,12 @@ app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Swagger UI at /swagger, reading the OpenAPI document that MapOpenApi serves.
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "OT Assessment API");
+    });
 }
 
 app.MapControllers();
