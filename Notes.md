@@ -38,7 +38,9 @@ How a wager moves through the system:
 2. The consumer collects up to 500 wagers and saves them with one stored procedure call.
 3. It acknowledges the messages only after the database commit.
 
-If the consumer crashes before step 3, RabbitMQ delivers the messages again. The stored procedure skips wagers it already has, so nothing is saved twice. A batch that fails 3 times goes to a dead letter queue instead of being lost.
+If the consumer crashes before step 3, RabbitMQ delivers the messages again. The stored procedure skips wagers it already has, so nothing is saved twice.
+
+If a batch fails 3 times, the consumer saves its wagers one at a time. The good ones are stored and only the wager that keeps failing goes to the dead letter queue. I tested this with 3 good wagers and 1 that was too long for the database: the 3 were saved and the bad one ended up in the dead letter queue.
 
 Database choices:
 

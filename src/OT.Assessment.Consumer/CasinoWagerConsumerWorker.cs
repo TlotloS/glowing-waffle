@@ -138,8 +138,29 @@ public class CasinoWagerConsumerWorker : BackgroundService
             }
         }
 
-        _logger.LogError("Moving {WagerCount} wagers to the dead letter queue after {Attempts} failed attempts", wagers.Count, _consumerOptions.MaxSaveAttempts);
-        await _channel!.BasicNackAsync(lastDeliveryTag, multiple: true, requeue: false, cancellationToken);
+        // The batch keeps failing, which usually means one bad wager. Save them one at a time
+        // so the good wagers are stored and only the bad ones go to the dead letter queue.
+        _logger.LogWarning("Saving {WagerCount} wagers one at a time after {Attempts} failed batch attempts", wagers.Count, _consumerOptions.MaxSaveAttempts);
+        await SaveOneByOneAsync(batch, cancellationToken);
+    }
+
+    private async Task SaveOneByOneAsync(List<ReceivedWager> batch, CancellationToken cancellationToken)
+    {
+        foreach (ReceivedWager receivedWager in batch)
+        {
+            var singleWager = new List<CasinoWager> { receivedWager.Wager };
+
+            try
+            {
+                await _wagerRepository.InsertBatchAsync(singleWager, cancellationToken);
+                await _channel!.BasicAckAsync(receivedWager.DeliveryTag, multiple: false, cancellationToken);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                _logger.LogError(exception, "Moving wager {WagerId} to the dead letter queue", receivedWager.Wager.WagerId);
+                await _channel!.BasicNackAsync(receivedWager.DeliveryTag, multiple: false, requeue: false, cancellationToken);
+            }
+        }
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)
